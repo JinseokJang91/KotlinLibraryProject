@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 // ctrl + space => commentForm 검색
 
 @SpringBootTest
-class UserServiceTest @Autowired constructor(
+class JavaUserServiceTest @Autowired constructor(
     private val userRepository: UserRepository,
     private val userService: UserService,
 ) {
@@ -75,7 +75,7 @@ class UserServiceTest @Autowired constructor(
     fun updateUserNameTest() {
         // given
         val savedUser = userRepository.save(User("A", null))
-        var request = UserUpdateRequest(savedUser.id, "B")
+        var request = UserUpdateRequest(savedUser.id!!, "B") // !! : null 아님 단언
 
         // when
         userService.updateUserName(request)
