@@ -6,9 +6,9 @@ import com.group.libraryapp.domain.user.User
 import com.group.libraryapp.domain.user.UserRepository
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistoryRepository
-import com.group.libraryapp.dto.book.request.BookLoanRequest
-import com.group.libraryapp.dto.book.request.BookRequest
-import com.group.libraryapp.dto.book.request.BookReturnRequest
+import com.group.libraryapp.dto.book.request.JavaBookLoanRequest
+import com.group.libraryapp.dto.book.request.JavaBookRequest
+import com.group.libraryapp.dto.book.request.JavaBookReturnRequest
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
@@ -36,7 +36,7 @@ class BookServiceTest @Autowired constructor(
     @DisplayName("책 등록 테스트 결과 정상")
     fun saveBookTest() {
         // given
-        val request = BookRequest("이상한 나라의 앨리스")
+        val request = JavaBookRequest("이상한 나라의 앨리스")
 
         // when
         bookService.saveBook(request)
@@ -54,7 +54,7 @@ class BookServiceTest @Autowired constructor(
         bookRepository.save(Book("이상한 나라의 앨리스"))
         val savedUser = userRepository.save(User("홍길동", 30))
 
-        val request = BookLoanRequest("홍길동", "이상한 나라의 앨리스")
+        val request = JavaBookLoanRequest("홍길동", "이상한 나라의 앨리스")
 
         // when
         bookService.loanBook(request)
@@ -81,7 +81,7 @@ class BookServiceTest @Autowired constructor(
                 false
             )
         )
-        val request = BookLoanRequest("홍길동", "이상한 나라의 앨리스")
+        val request = JavaBookLoanRequest("홍길동", "이상한 나라의 앨리스")
 
         // when
         val message = assertThrows<IllegalArgumentException> {
@@ -106,7 +106,8 @@ class BookServiceTest @Autowired constructor(
                 false
             )
         )
-        val request = BookReturnRequest("홍길동", "이상한 나라의 앨리스")
+        val request =
+            JavaBookReturnRequest("홍길동", "이상한 나라의 앨리스")
 
         // when
         bookService.returnBook(request)
