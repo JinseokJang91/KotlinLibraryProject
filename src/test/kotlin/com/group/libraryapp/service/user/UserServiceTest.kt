@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 // ctrl + space => commentForm 검색
 
 @SpringBootTest
-class JavaUserServiceTest @Autowired constructor(
+class UserServiceTest @Autowired constructor(
     private val userRepository: UserRepository,
     private val userService: UserService,
 ) {
