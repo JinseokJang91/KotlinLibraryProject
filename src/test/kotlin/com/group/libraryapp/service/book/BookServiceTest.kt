@@ -2,10 +2,12 @@ package com.group.libraryapp.service.book
 
 import com.group.libraryapp.domain.book.Book
 import com.group.libraryapp.domain.book.BookRepository
+import com.group.libraryapp.domain.book.BookType
 import com.group.libraryapp.domain.user.User
 import com.group.libraryapp.domain.user.UserRepository
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistoryRepository
+import com.group.libraryapp.domain.user.loanhistory.UserLoanStatus
 import com.group.libraryapp.dto.book.request.BookLoanRequest
 import com.group.libraryapp.dto.book.request.BookRequest
 import com.group.libraryapp.dto.book.request.BookReturnRequest
@@ -36,7 +38,7 @@ class BookServiceTest @Autowired constructor(
     @DisplayName("책 등록 테스트 결과 정상")
     fun saveBookTest() {
         // given
-        val request = BookRequest("이상한 나라의 앨리스")
+        val request = BookRequest("이상한 나라의 앨리스", BookType.COMPUTER)
 
         // when
         bookService.saveBook(request)
@@ -45,13 +47,14 @@ class BookServiceTest @Autowired constructor(
         val books = bookRepository.findAll()
         assertThat(books).hasSize(1)
         assertThat(books[0].name).isEqualTo("이상한 나라의 앨리스")
+        assertThat(books[0].type).isEqualTo(BookType.COMPUTER)
     }
 
     @Test
     @DisplayName("책 대출 정상 동작 테스트 결과 정상")
     fun loanBookTest() {
         // given
-        bookRepository.save(Book("이상한 나라의 앨리스"))
+        bookRepository.save(Book.fixture("이상한 나라의 앨리스"))
         val savedUser = userRepository.save(User("홍길동", 30))
 
         val request = BookLoanRequest("홍길동", "이상한 나라의 앨리스")
@@ -64,21 +67,23 @@ class BookServiceTest @Autowired constructor(
         assertThat(results).hasSize(1)
         assertThat(results[0].bookName).isEqualTo("이상한 나라의 앨리스")
         assertThat(results[0].user.id).isEqualTo(savedUser.id)
-        assertThat(results[0].isReturn).isFalse() // isFalse() 대신 isFalse만 작성해도 정상 동작함
+        //assertThat(results[0].status).isFalse() // isFalse() 대신 isFalse만 작성해도 정상 동작함
+        // enum class 적용
+        assertThat(results[0].status).isEqualTo(UserLoanStatus.LOANED) // isFalse() 대신 isFalse만 작성해도 정상 동작함
     }
 
     @Test
     @DisplayName("책이 진작 대출되어 있다면, 신규 대출이 실패")
     fun loanBookFailTest() {
         // given
-        bookRepository.save(Book("이상한 나라의 앨리스"))
+        bookRepository.save(Book.fixture("이상한 나라의 앨리스"))
         val savedUser = userRepository.save(User("홍길동", 30))
 
         userLoanHistoryRepository.save(
-            UserLoanHistory(
+            UserLoanHistory.fixture(
                 savedUser,
                 "이상한 나라의 앨리스",
-                false
+//                UserLoanStatus.LOANED
             )
         )
         val request = BookLoanRequest("홍길동", "이상한 나라의 앨리스")
@@ -96,14 +101,14 @@ class BookServiceTest @Autowired constructor(
     @DisplayName("책 반납 테스트 결과 정상")
     fun returnBookTest() {
         // given
-        bookRepository.save(Book("이상한 나라의 앨리스"))
+        bookRepository.save(Book.fixture("이상한 나라의 앨리스"))
         val savedUser = userRepository.save(User("홍길동", 30, Collections.emptyList(), null))
 
         userLoanHistoryRepository.save(
-            UserLoanHistory(
+            UserLoanHistory.fixture(
                 savedUser,
                 "이상한 나라의 앨리스",
-                false
+//                UserLoanStatus.LOANED
             )
         )
         val request =
@@ -115,6 +120,8 @@ class BookServiceTest @Autowired constructor(
         // then
         val results = userLoanHistoryRepository.findAll()
         assertThat(results).hasSize(1)
-        assertThat(results[0].isReturn).isTrue
+        //assertThat(results[0].status).isTrue
+        // enum class 적용
+        assertThat(results[0].status).isEqualTo(UserLoanStatus.RETURNED)
     }
 }
