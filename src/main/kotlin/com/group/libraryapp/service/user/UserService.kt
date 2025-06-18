@@ -27,9 +27,10 @@ class UserService (
     @Transactional(readOnly = true)
     fun getUsers(): List<UserResponse> {
         return userRepository.findAll()
-            .map(::UserResponse)
+          //.map(::UserResponse)
           //.map { UserResponse(it) }
-          //.map { user -> UserResponse(user)
+          //.map { user -> UserResponse(user) }
+            .map { user -> UserResponse.of(user) } // 정적팩토리 메소드 활용
     }
 
     @Transactional
