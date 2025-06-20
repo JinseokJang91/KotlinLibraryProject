@@ -12,7 +12,7 @@ class UserLoanHistory (
     @ManyToOne
     val user: User,
 
-    val bookName: String?,
+    val bookName: String,
 
     //var isReturn: Boolean,
     var status: UserLoanStatus = UserLoanStatus.LOANED,
@@ -21,6 +21,10 @@ class UserLoanHistory (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 ) {
+
+    val isReturn: Boolean
+        get() = this.status == UserLoanStatus.RETURNED
+
     fun doReturn() {
         this.status = UserLoanStatus.RETURNED
     }

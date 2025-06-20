@@ -2,12 +2,14 @@ package com.group.libraryapp.service.user
 
 import com.group.libraryapp.domain.user.User
 import com.group.libraryapp.domain.user.UserRepository
+import com.group.libraryapp.domain.user.loanhistory.UserLoanStatus
 import com.group.libraryapp.dto.user.request.UserCreateRequest
 import com.group.libraryapp.dto.user.request.UserUpdateRequest
+import com.group.libraryapp.dto.user.response.BookHistoryResponse
+import com.group.libraryapp.dto.user.response.UserLoanHistoryResponse
 import com.group.libraryapp.dto.user.response.UserResponse
 import com.group.libraryapp.util.fail
 import com.group.libraryapp.util.findByIdOrThrow
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -55,5 +57,42 @@ class UserService (
         val user = userRepository.findByName(name) ?: fail() // elvis 연산자 사용
 
         userRepository.delete(user)
+    }
+
+    @Transactional
+    fun getUserLoanHistories(): List<UserLoanHistoryResponse> {
+//        return userRepository.findAll().map {
+//            user -> UserLoanHistoryResponse(
+//                name = user.name,
+//                books = user.userLoanHistories.map {
+//                    history -> BookHistoryResponse(
+//                        name = history.bookName,
+//                        isReturn = history.status == UserLoanStatus.RETURNED
+//                    )
+//                }
+//            )
+//        }
+        return userRepository.findAllWithHistories().map {
+            /*
+            user -> UserLoanHistoryResponse(
+                name = user.name,
+//                books = user.userLoanHistories.map {
+//                    history -> BookHistoryResponse(
+//                        name = history.bookName,
+//                        isReturn = history.status == UserLoanStatus.RETURNED
+//                    )
+//                }
+            // books 간소화 1단계 => DTO 에 정적 팩토리 메소드 활용
+//                books = user.userLoanHistories.map {
+//                    history -> BookHistoryResponse.of(history)
+//                }
+            // books 간소화 2단계 => 메소드 레퍼런스 활용
+                books = user.userLoanHistories.map(BookHistoryResponse::of)
+            )
+            */
+
+            // user 간소화 (메소드 레퍼런스로 변경도 가능)
+            user -> UserLoanHistoryResponse.of(user)
+        }
     }
 }
