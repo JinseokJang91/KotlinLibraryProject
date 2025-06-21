@@ -7,5 +7,9 @@ interface UserLoanHistoryRepository : JpaRepository<UserLoanHistory, Long> {
     //fun findByBookNameAndIsReturn(bookName: String, isReturn: Boolean): UserLoanHistory?
 
     // => status로 변경
-    fun findByBookNameAndStatus(bookName: String, status: UserLoanStatus): UserLoanHistory?
+    fun findByBookNameAndStatus(bookName: String, status: UserLoanStatus): UserLoanHistory? // findBy~
+
+    fun findAllByStatus(status: UserLoanStatus): List<UserLoanHistory> // findAllBy~
+
+    fun countByStatus(status: UserLoanStatus): Long // countBy~
 }
